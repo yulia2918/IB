@@ -1,15 +1,75 @@
+работа с учетными записями пользователей и с группами
+
 1. Просмотр списка пользователей:
 cat /etc/passwd
+
 2. просмотр паролей
 sudo cat /etc/shadow
+
 3. просмотр инф-и о группах
 cat /etc/group
+
 4. просмотр паролей групп
 sudo cat /etc/gpasswd
 
-создание пользователя для администратора:
+примечание:
+просмотр инф-и обо всех пользователях системы (не только локальныХ) и о группах можно выполнить при помощи getent
+getent passwd
+getent group
+пример:
+getent group | grep student
+adm:x:4:syslog,student
+cdrom:x:24:student
+sudo:x:27:student
+dip:x:30:student
+plugdev:x:46:student
+users:x:100:student
+lxd:x:101:student
+student:x:1000:
+vboxsf:x:983:student
+docker:x:107:student,user12,polozun
+testers:x:1003:student,user12,polozun
+
+5. создание пользователя для администратора:
 sudo useradd -m -s /bin/bash <имя_пользователя>
-изменение настроек для цчетной записи
+
+6. изменение настроек для цчетной записи
 sudo usermod -L <имя_пользователя> (блокировка)
 sudo usermod -aG <список групп> <имя пользователя> (добавление группы)
+(на момент добавления пользователя в доп.группу, группа уже должна быть создана)
+пример:
+usermod -aG testers,progers,user13 user12
 
+7. просмотр информации по отдельной учетной записи:
+id <name_of_user>
+пример:
+id user12
+uid=1001(user12) gid=1001(user12) groups=1001(user12),107(docker),1002(user13),1003(testers),1004(progers)
+
+8. создание новой группы (только для администратора):
+groupadd <name_of_group>
+пример:
+sudo groupadd testers
+sudo groupadd progers
+
+9. смена пароля для учетной записи
+в режиме пользователя:
+passwd
+в режиме администратора:
+sudo passwd <name_of_user>
+пример:
+sudo passwd user12
+Changing password for user12.
+Current password: 
+New password: 
+Retype new password: 
+passwd: password updated successfully
+
+10. смена пароля для группы (для администраторов группы)
+sudo gpasswd <name_of_group>
+назначение администраторов группы (для администратора)
+sudo gpasswd -A <name_of_user> <name_of_group>
+пример:
+sudo gpasswd -A user12 testers
+user12 может администрировать группу testers:
+gpasswd testers
