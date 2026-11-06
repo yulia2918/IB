@@ -1,0 +1,67 @@
+Работа с учётными записями пользователей и с группами
+
+1. Просмотр списка пользователей в linux:
+cat /etc/passwd
+2. Просмотр паролей (для администратора):
+sudo cat /etc/shadow
+3. Просмотр информации о группах:
+cat /etc/group
+4. Просмотр паролей групп (для администратора):
+sudo cat /etc/gpasswd
+
+Примечание:
+Просмотр информации обо всех пользователях системы (не только локальных) и о группах можно выполнить при помощи getent
+getent passwd
+getnet group
+Примеры:
+getent passwd | grep student
+student:x:1000:1000:student:/home/student:/bin/bash
+
+getent group | grep student
+adm:x:4:syslog,student
+cdrom:x:24:student
+sudo:x:27:student
+dip:x:30:student
+plugdev:x:46:student
+users:x:100:student
+lxd:x:101:student
+student:x:1000:
+vboxsf:x:983:student
+docker:x:981:student,jenkins,user11
+testers:x:1004:student,user11
+
+5. Создание пользователя (для администратора):
+sudo useradd -m -s /bin/bash <имя_пользователя>
+6. Изменение настроек для учётной записи (для администратора):
+sudo usermod -L <имя_пользователя> (блокировка)
+sudo usermod -aG <список групп> <имя_пользователя> (добавление в группы)
+(на момент включения пользователей в дополнительную группу группа должна быть уже создана)
+Пример включения user11 в несколько групп:
+usermod -aG testers,progers,user12 user11
+
+7. Просмотр информации по отдельной учётной записи
+id <имя учётной записи>
+Пример:
+id user11
+uid=1002(user11) gid=1002(user11) groups=1002(user11),981(docker),1003(user12),1004(testers),1005(progers)
+
+8. Создание новой группы (для администратора):
+groupadd <имя_группы>
+Пример:
+ sudo groupadd testers
+ sudo groupadd progers
+
+9. Смена пароля для учётной записи
+В режиме пользователя:
+passwd
+В режиме администратора:
+sudo passwd <имя_пользователя>
+
+10. Смена пароля для группы (для администраторов группы)
+gpasswd <имя_группы>
+Назначение администраторов группы (для администратора):
+sudo gpasswd -A <учётная запись> <имя_группы>
+Пример:
+sudo gpasswd -A user11 testers
+user11 может администрировать группу testers:
+gpasswd testers
